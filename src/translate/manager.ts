@@ -7,8 +7,9 @@ import { BingTranslate } from "./BingTranslate";
 import { detectLanguage } from "../lang";
 import { CopilotTranslate } from "./CopilotTranslate";
 import { TranSmartTranslate } from "./TranSmartTranslate";
+import { outputChannel } from "../extension";
 
-
+export { outputChannel };
 export let translateManager: TranslateManager;
 export let translateExtensionProvider: TranslateExtensionProvider
 

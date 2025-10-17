@@ -89,9 +89,9 @@ export async function getMarkdownTextValue(markStr: string) {
         walkTokens: (token) => {
 
             // Part of the three-party plug-ins use html format to return, unable to accurately translate the content, directly skip.
-            if (token.type === "html") {
-                skipTranslate = true;
-            }
+            // if (token.type === "html") {
+            //     skipTranslate = true;
+            // }
 
             if (token.type === "link" && token.title) {
                 let title = unescape(token.title).trim();
@@ -142,15 +142,20 @@ export async function getMarkdownTextValue(markStr: string) {
                 token.text = (
                     await Promise.all(
                         arr.map(async (txt) => {
-
+                            // outputChannel.appendLine(`[TOKENIZER] Processing text: "${txt}"`);
                             // If the original text is in the target language, no more translation will be performed
                             let detected = await detectLanguage(txt);
-                            if (translateManager.opts.to?.indexOf(detected) === 0) {
+                            let targetLanguage = translateManager.opts.to;
+                            // outputChannel.appendLine(`[TOKENIZER] Detected: '${detected}', Target: '${targetLanguage}'`);
+                            if (targetLanguage?.indexOf(detected) === 0) {
+                                // outputChannel.appendLine(`[TOKENIZER] -> Skipping translation (source and target language are the same).`);
                                 return txt;
                             }
 
                             hasTranslated = true;
-                            return translate(txt);
+                            let translatedText = await translate(txt);
+                            // outputChannel.appendLine(`[TOKENIZER] -> Translated to: "${translatedText}"`);
+                            return translatedText;
                         })
                     )
                 ).join("\n");
